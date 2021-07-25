@@ -4,7 +4,7 @@ package lesson1_HT;
  * Объект препятствия беговая дистанция
  */
 
-public class Runningtrack implements Obstacle{
+public class Runningtrack implements Obstacle {
 
     private int distance;
 

@@ -18,7 +18,6 @@ public class Human implements RunnerType {
     }
 
 
-
     @Override
     public String getName() {
         return name;

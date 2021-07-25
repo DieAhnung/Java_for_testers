@@ -4,7 +4,7 @@ package lesson1_HT;
  * Объект препятствия стена
  */
 
-public class Wall implements Obstacle{
+public class Wall implements Obstacle {
 
     private int height;
 

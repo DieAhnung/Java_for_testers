@@ -6,7 +6,9 @@ package lesson1_HT;
 
 public interface RunnerType {
     String getName();
+
     int getMaxDist();
+
     int getMaxHeight();
 
     void doIt(Obstacle obs);

@@ -4,7 +4,7 @@ package lesson1_HT;
  * Объект класса кот
  */
 
-public class Cat implements RunnerType{
+public class Cat implements RunnerType {
 
     private String name;
     private int MaxRunDistance;
@@ -16,7 +16,6 @@ public class Cat implements RunnerType{
         this.MaxRunDistance = MaxRunDistance; // Высота прыжка
         this.MaxJumpHeight = MaxJumpHeight; //Дистанция бега
     }
-
 
 
     @Override
@@ -37,32 +36,27 @@ public class Cat implements RunnerType{
     @Override
     public void doIt(Obstacle ob) {
 
-        if  (able) {
+        if (able) {
             if (ob instanceof Wall) {
 
                 if (ob.getParam() > 0 && ob.getParam() <= MaxJumpHeight) {
                     jump();
-                }
-                else if (ob.getParam() > MaxJumpHeight) {
+                } else if (ob.getParam() > MaxJumpHeight) {
                     System.err.println(this.name + " cat't jump on " + ob.getParam()
                             + " meters and falls out of the race");
                     this.able = false;
-                }
-                else {
+                } else {
                     System.err.println("Please find a wall");
                 }
 
-            }
-            else if (ob instanceof Runningtrack) {
+            } else if (ob instanceof Runningtrack) {
                 if (ob.getParam() > 0 && ob.getParam() <= MaxRunDistance) {
                     run();
-                }
-                else if (ob.getParam() > MaxRunDistance) {
+                } else if (ob.getParam() > MaxRunDistance) {
                     System.err.println(this.name + " can't race on " + ob.getParam()
                             + " meters and falls out of the race");
                     this.able = false;
-                }
-                else {
+                } else {
                     System.err.println("No way");
                 }
 

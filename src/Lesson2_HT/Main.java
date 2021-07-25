@@ -7,8 +7,8 @@ package Lesson2_HT;
 //3. В методе main() вызвать полученный метод, обработать возможные исключения
 //  MySizeArrayException и MyArrayDataException и вывести результат расчета.
 
-public class main {
-    public static void main(String[] args) {
+public class Main {
+    public static void Main(String[] args) {
 
         String[][] arr = new String[][]{{"1", "2", "3", "4"}, {"2", "2", "2", "3"},
                 {"1", "5", "2", "2"}, {"2", "2", "2", "2"}};
@@ -19,8 +19,7 @@ public class main {
             } catch (MyArraySizeException e) {
                 System.out.println("Размер массива превышен!");
             }
-        }
-        catch (MyArrayDataException e) {
+        } catch (MyArrayDataException e) {
             System.out.println("Неправильное значение массива!");
             System.out.println("Ошибка в ячейке: " + e.i + "x" + e.j);
         }
@@ -40,8 +39,7 @@ public class main {
             for (int j = 0; j < arr[i].length; j++) {
                 try {
                     count = count + Integer.parseInt(arr[i][j]);
-                }
-                catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     throw new MyArrayDataException(i, j);
                 }
             }
