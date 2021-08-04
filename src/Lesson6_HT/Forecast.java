@@ -26,7 +26,6 @@ public class Forecast {
         OkHttpClient accuClient = new OkHttpClient();
 
 
-        // first we must find locationKey for SPB. Crate URL
         HttpUrl httpUrl = new HttpUrl.Builder()
                 .scheme(PROTOCOL)
                 .host(BASE_HOST)
@@ -38,16 +37,13 @@ public class Forecast {
                 .addQueryParameter("q", CITY)
                 .build();
 
-        //Create request
         Request request = new Request.Builder()
                 .url(httpUrl)
                 .build();
 
-        //execute request
         Response respGetLocnKey = accuClient.newCall(request).execute();
 
 
-        //get locationKey from response
         String responseBody = respGetLocnKey.body().string();
         ObjectMapper objectMapper = new ObjectMapper();
         String locationKey = objectMapper.readTree(responseBody).get(0).at("/Key").asText();
@@ -75,7 +71,6 @@ public class Forecast {
 
         responseBody = respGetForecast.body().string();
 
-        //and try to save forecast to json file
         try (PrintWriter out = new PrintWriter(FILE)) {
             out.println(responseBody);
         } catch (IOException e) {
