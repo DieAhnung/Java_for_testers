@@ -1,57 +1,73 @@
 package Lesson6_HT;
 
-
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-
+import okhttp3.*;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Forecast {
-    private static final String PROTOCOL = "HTTP";
+
     private static final String BASE_HOST = "dataservice.accuweather.com";
     private static final String FORECASTS = "forecasts";
     private static final String LOCATIONS = "locations";
     private static final String API_VERSION = "v1";
     private static final String FORECAST_TYPE = "daily";
     private static final String FORECAST_PERIOD = "5day";
-    private static final String API_KEY = "Ip6EdKDbr16vYSyF1YdkBwd8oKbKCC4S";
-    private static final String CITES = "cities";
-    private static final String SEARCH = "search";
-    private static final String CITY = "Санкт-Петербург";
-    private static final String FILE = "forecastForSPB.json";
+    private static final String API_KEY = "\tgGfyDdBxCNQ62GURAvMmXxRRtjqXNqID";
+    private static final String CITY = "Москва";
+    private static final String FILE = "forecast.json";
 
     public static void main(String args[]) throws IOException {
-        System.out.println("Forecast in " + CITY);
-        OkHttpClient accuClient = new OkHttpClient();
 
+        System.out.printf("Хотите узнать погоду в городе %s?\n", CITY);
 
-        HttpUrl httpUrl = new HttpUrl.Builder()
-                .scheme(PROTOCOL)
+        Scanner scanner = new Scanner(System.in);
+        String answer = scanner.nextLine();
+
+        System.out.printf("Вы ответили: %s, а прогноз в городе %s смотрите в файле %s \n", answer, CITY, FILE);
+
+        OkHttpClient client = new OkHttpClient()
+                .newBuilder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .followRedirects(true)
+                .retryOnConnectionFailure(true)
+                .build();
+
+        HttpUrl url = new HttpUrl.Builder()
+                .scheme("http")
                 .host(BASE_HOST)
                 .addPathSegment(LOCATIONS)
                 .addPathSegment(API_VERSION)
-                .addPathSegment(CITES)
-                .addPathSegment(SEARCH)
+                .addPathSegment("cities")
+                .addPathSegment("search")
                 .addQueryParameter("apikey", API_KEY)
                 .addQueryParameter("q", CITY)
                 .build();
 
         Request request = new Request.Builder()
-                .url(httpUrl)
+                .url(url)
+                .get()
                 .build();
 
-        Response respGetLocnKey = accuClient.newCall(request).execute();
+        Response responseGetLocationKey = client.newCall(request).execute();
 
+        if(responseGetLocationKey.code() != 200){
+            System.out.println("Не получится узнать погоду.");
+            return;
+        }
 
-        String responseBody = respGetLocnKey.body().string();
-        ObjectMapper objectMapper = new ObjectMapper();
-        String locationKey = objectMapper.readTree(responseBody).get(0).at("/Key").asText();
-        System.out.println(locationKey);
+        String responseBody = responseGetLocationKey.body().string();
 
+        String locationKey = responseBody.split(":")[2];
 
-        httpUrl = new HttpUrl.Builder()
-                .scheme(PROTOCOL)
+        locationKey = locationKey.split(",")[0];
+        locationKey = locationKey.replaceAll("[^\\p{L}\\p{Nd}]+", "");
+
+        url = new HttpUrl.Builder()
+                .scheme("http")
                 .host(BASE_HOST)
                 .addPathSegment(FORECASTS)
                 .addPathSegment(API_VERSION)
@@ -64,12 +80,18 @@ public class Forecast {
                 .build();
 
         request = new Request.Builder()
-                .url(httpUrl)
+                .url(url)
+                .get()
                 .build();
 
-        Response respGetForecast = accuClient.newCall(request).execute();
+        Response responseGetForecast = client.newCall(request).execute();
 
-        responseBody = respGetForecast.body().string();
+        if(responseGetForecast.code() != 200){
+            System.out.println("Не получится узнать погоду.");
+            return;
+        }
+
+        responseBody = responseGetForecast.body().string();
 
         try (PrintWriter out = new PrintWriter(FILE)) {
             out.println(responseBody);
@@ -77,7 +99,6 @@ public class Forecast {
             e.printStackTrace();
         }
 
-        System.out.println(responseBody);
-
     }
+
 }
